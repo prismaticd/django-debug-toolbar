@@ -26,9 +26,8 @@ class LogCollector(ThreadCollector):
 
 
 class ThreadTrackingHandler(logging.Handler):
-    def __init__(self, collector):
+    def __init__(self):
         logging.Handler.__init__(self)
-        self.collector = collector
 
     def emit(self, record):
         try:
@@ -44,14 +43,14 @@ class ThreadTrackingHandler(logging.Handler):
             "line": record.lineno,
             "channel": record.name,
         }
-        self.collector.collect(record)
+        collector.collect(record)
 
 
 # We don't use enable/disable_instrumentation because logging is global.
 # We can't add thread-local logging handlers. Hopefully logging is cheap.
 
 collector = LogCollector()
-logging_handler = ThreadTrackingHandler(collector)
+logging_handler = ThreadTrackingHandler()
 logging.root.addHandler(logging_handler)
 
 
